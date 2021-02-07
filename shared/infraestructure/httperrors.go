@@ -1,9 +1,10 @@
-package shared
+package infraestructure
 
 import (
 	"net/http"
 
 	shared "alejandrogarcia.com/alejogs4/todolist/shared/domain"
+	"alejandrogarcia.com/alejogs4/todolist/tasks/domain"
 	"alejandrogarcia.com/alejogs4/todolist/tasks/domain/taskstate"
 )
 
@@ -18,6 +19,8 @@ func NewHTTPError(domainError shared.DomainError) HTTPError {
 	switch resultError := domainError.(type) {
 	case taskstate.InvalidState:
 		return HTTPError{Message: resultError.Message(), Status: http.StatusBadRequest}
+	case domain.NotExistentTask:
+		return HTTPError{Message: resultError.Message(), Status: http.StatusNotFound}
 	default:
 		return HTTPError{}
 	}

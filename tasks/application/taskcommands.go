@@ -11,7 +11,7 @@ import (
 
 // TaskCommands contains the set of operations that are thought to change information about tasks
 type TaskCommands struct {
-	taskRepository domain.TaskRespository
+	TaskRepository domain.TaskRespository
 }
 
 // CreateNewTask is the application layer operation to add a new task, here bussines rules are checked
@@ -30,5 +30,21 @@ func (t TaskCommands) CreateNewTask(title, description string, dueDate time.Time
 		State:   taskstate.TaskState{Value: normalizedState},
 	}
 
-	return t.taskRepository.CreateNewTask(newTask)
+	return t.TaskRepository.CreateNewTask(newTask)
+}
+
+// ChangeTaskState will change a task state if accomplish with bussines rules
+func (t TaskCommands) ChangeTaskState(taskID, newState string) error {
+	task, error := t.TaskRepository.GetTask(taskID)
+	if error != nil {
+		return error
+	}
+
+	normalizedState := strings.ToUpper(strings.Join(strings.Fields(strings.TrimSpace(newState)), ""))
+	newTaskState, error := task.State.NewTaskStateTransition(normalizedState)
+	if error != nil {
+		return error
+	}
+
+	return t.TaskRepository.ChangeTaskState(taskID, newTaskState.Value)
 }
