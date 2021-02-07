@@ -2,6 +2,7 @@ package domain
 
 import "fmt"
 
+// NotExistentTask modeled an error when a task doesn't exist
 type NotExistentTask struct {
 	TaskID string
 }
