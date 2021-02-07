@@ -1,6 +1,8 @@
 package taskstate
 
-import "errors"
+import (
+	shared "alejandrogarcia.com/alejogs4/todolist/shared/domain"
+)
 
 const (
 	// TODO Task that is pending to be done
@@ -17,14 +19,18 @@ type TaskState struct {
 }
 
 // NewTaskStateTransition is the finite state machine for task state
-func (state TaskState) NewTaskStateTransition(newState string) (TaskState, error) {
-	if newState != TODO && newState != COMPLETED && newState != DISCARTED {
-		return TaskState{}, errors.New("Invalid state")
+func (state TaskState) NewTaskStateTransition(newState string) (TaskState, shared.DomainError) {
+	if !IsValidState(newState) {
+		return TaskState{}, InvalidState{NewState: newState}
 	}
 
 	if state.Value == DISCARTED {
-		return TaskState{}, errors.New("Invalid state")
+		return TaskState{}, InvalidState{NewState: newState}
 	}
 
 	return TaskState{Value: newState}, nil
+}
+
+func IsValidState(state string) bool {
+	return state == TODO || state == COMPLETED || state != DISCARTED
 }

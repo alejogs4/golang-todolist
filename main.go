@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 
-	"alejandrogarcia.com/alejogs4/todolist/shared/infraestructure"
+	shared "alejandrogarcia.com/alejogs4/todolist/shared/infraestructure"
 )
 
 func main() {
-	defer infraestructure.PostgresDB.Close()
+	defer shared.PostgresDB.Close()
 	fmt.Println("Runnig app")
 }
