@@ -55,6 +55,7 @@ func (repository PostgresTaskRepository) GetTasks() ([]domain.Task, error) {
 		"SELECT id, title, description, due_date, state FROM tasks WHERE state != $1 ORDER BY state DESC",
 		taskstate.DISCARTED,
 	)
+	defer rows.Close()
 
 	if error != nil {
 		return nil, error

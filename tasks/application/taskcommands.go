@@ -1,7 +1,6 @@
 package application
 
 import (
-	"strings"
 	"time"
 
 	"alejandrogarcia.com/alejogs4/todolist/tasks/domain"
@@ -16,7 +15,7 @@ type TaskCommands struct {
 
 // CreateNewTask is the application layer operation to add a new task, here bussines rules are checked
 func (t TaskCommands) CreateNewTask(title, description string, dueDate time.Time, state string) error {
-	normalizedState := strings.ToUpper(strings.Join(strings.Fields(strings.TrimSpace(state)), ""))
+	normalizedState := taskstate.NormalizeTaskState(state)
 
 	if !taskstate.IsValidState(normalizedState) {
 		return taskstate.InvalidState{NewState: normalizedState}
@@ -40,8 +39,7 @@ func (t TaskCommands) ChangeTaskState(taskID, newState string) error {
 		return error
 	}
 
-	normalizedState := strings.ToUpper(strings.Join(strings.Fields(strings.TrimSpace(newState)), ""))
-	newTaskState, error := task.State.NewTaskStateTransition(normalizedState)
+	newTaskState, error := task.State.NewTaskStateTransition(newState)
 	if error != nil {
 		return error
 	}

@@ -1,5 +1,7 @@
 package taskstate
 
+import "strings"
+
 const (
 	// TODO Task that is pending to be done
 	TODO = "TODO"
@@ -16,18 +18,24 @@ type TaskState struct {
 
 // NewTaskStateTransition is the finite state machine for task state
 func (state TaskState) NewTaskStateTransition(newState string) (TaskState, error) {
-	if !IsValidState(newState) {
-		return TaskState{}, InvalidState{NewState: newState}
+	normalizedTaskState := NormalizeTaskState(newState)
+
+	if !IsValidState(normalizedTaskState) {
+		return TaskState{}, InvalidState{NewState: normalizedTaskState}
 	}
 
 	if state.Value == DISCARTED {
-		return TaskState{}, InvalidState{NewState: newState}
+		return TaskState{}, InvalidState{NewState: normalizedTaskState}
 	}
 
-	return TaskState{Value: newState}, nil
+	return TaskState{Value: normalizedTaskState}, nil
 }
 
 // IsValidState verify is passed state is a valid one
 func IsValidState(state string) bool {
 	return state == TODO || state == COMPLETED || state == DISCARTED
+}
+
+func NormalizeTaskState(taskState string) string {
+	return strings.ToUpper(strings.Join(strings.Fields(strings.TrimSpace(taskState)), ""))
 }
