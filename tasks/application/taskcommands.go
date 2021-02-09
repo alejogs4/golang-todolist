@@ -22,10 +22,11 @@ func (t TaskCommands) CreateNewTask(title, description string, dueDate time.Time
 
 	taskID := uuid.New()
 	newTask := domain.Task{
-		ID:      taskID.String(),
-		Title:   title,
-		DueDate: dueDate,
-		State:   newTaskState,
+		ID:          taskID.String(),
+		Description: description,
+		Title:       title,
+		DueDate:     dueDate,
+		State:       newTaskState,
 	}
 
 	return t.TaskRepository.CreateNewTask(newTask)
