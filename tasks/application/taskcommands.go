@@ -15,10 +15,9 @@ type TaskCommands struct {
 
 // CreateNewTask is the application layer operation to add a new task, here bussines rules are checked
 func (t TaskCommands) CreateNewTask(title, description string, dueDate time.Time, state string) error {
-	normalizedState := taskstate.NormalizeTaskState(state)
-
-	if !taskstate.IsValidState(normalizedState) {
-		return taskstate.InvalidState{NewState: normalizedState}
+	newTaskState, error := taskstate.CreateTasktState(state)
+	if error != nil {
+		return error
 	}
 
 	taskID := uuid.New()
@@ -26,7 +25,7 @@ func (t TaskCommands) CreateNewTask(title, description string, dueDate time.Time
 		ID:      taskID.String(),
 		Title:   title,
 		DueDate: dueDate,
-		State:   taskstate.TaskState{Value: normalizedState},
+		State:   newTaskState,
 	}
 
 	return t.TaskRepository.CreateNewTask(newTask)
